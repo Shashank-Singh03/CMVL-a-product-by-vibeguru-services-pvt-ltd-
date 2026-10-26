@@ -294,8 +294,10 @@ See [docs/architecture.md](docs/architecture.md) for the algorithms and design d
 - **Config parsers read the common shapes.** Heavily templated Helm charts and unusual pipeline syntax are approximated.
 - **Risk flags are line-based heuristics.** They catch common mistakes, not logic bugs, and they are not a replacement for
   a security scanner.
-- **Tested on Windows 11 only**, with Python 3.12 and 3.13, Chrome 155 and Edge, ffmpeg 9.0.2 and Piper 1.8. The macOS and
-  Linux code paths (`say`, `espeak-ng`, browser discovery) are written but not yet run on those systems.
+- **Native video and speech testing covers Windows 11**, with Python 3.12 and 3.13, Chrome 155 and Edge, ffmpeg 9.0.2 and
+  Piper 1.8. Hosted core regression checks target Python 3.9/3.13 on Windows and Linux; see
+  [Actions](https://github.com/Shashank-Singh03/CMVL-a-product-by-vibeguru-services-pvt-ltd-/actions) for results.
+  Native macOS/Linux speech and browser combinations are not yet certified.
 - **Piper is installed separately** (`pip install piper-tts`, about 6 s for 2 minutes of speech on a laptop CPU) and is
   licensed GPL-3.0; codemap only runs it as a separate program, and falls back to the OS voice without it.
 - **Very large codebases** map fine: the whole Python standard library (636 files, 17k symbols) takes 6.4 s, and 12.5 s with

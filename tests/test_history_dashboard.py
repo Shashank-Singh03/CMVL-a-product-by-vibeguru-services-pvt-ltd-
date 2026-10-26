@@ -44,7 +44,8 @@ class HistoryDashboardTest(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory(prefix="codemap-dashboard-")
         self.addCleanup(self.temp.cleanup)
-        self.root = Path(self.temp.name) / "fixture-project"
+        # Keep reparse mocks effective when Windows TEMP is an 8.3 alias.
+        self.root = Path(self.temp.name).resolve() / "fixture-project"
         self.root.mkdir()
 
     def state(self, ident=None, **fields):

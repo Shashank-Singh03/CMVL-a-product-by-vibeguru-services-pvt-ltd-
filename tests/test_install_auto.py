@@ -30,7 +30,7 @@ class AutoInstallTests(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory(prefix="codemap-install-test-")
         self.addCleanup(self.temp.cleanup)
-        self.root = Path(self.temp.name)
+        self.root = Path(self.temp.name).resolve()
         self.source = self.root / "fixture-skill"
         (self.source / "scripts").mkdir(parents=True)
         (self.source / "SKILL.md").write_text("---\nname: codemap\n---\nfixture\n", encoding="utf-8")
@@ -167,6 +167,44 @@ class AutoInstallTests(unittest.TestCase):
             self.assertFalse(installer._owned_hook({**hook, "command": command + " && echo unrelated"}, self.script))
         unix = installer._hook_command(self.root / "space ' and $ dollar" / "codemap.py", "start", platform="posix")
         self.assertEqual(shlex.split(unix, comments=True), [sys.executable, str(self.root / "space ' and $ dollar" / "codemap.py"), "hook", "start"])
+
+    @unittest.skipUnless(sys.platform == "win32", "Windows short-path aliases")
+    def test_short_alias_hooks_are_owned_and_reinstall_without_duplicates(self):
+        import ctypes
+
+        self.assertEqual(self.run_install("--auto"), 0)
+        get_short = ctypes.WinDLL("kernel32", use_last_error=True).GetShortPathNameW
+        get_short.argtypes = (ctypes.c_wchar_p, ctypes.c_wchar_p, ctypes.c_uint)
+        get_short.restype = ctypes.c_uint
+        size = get_short(str(self.script), None, 0)
+        if not size:
+            self.skipTest("GetShortPathNameW is unavailable for this fixture")
+        buffer = ctypes.create_unicode_buffer(size)
+        if not get_short(str(self.script), buffer, size):
+            self.skipTest("GetShortPathNameW could not read this fixture")
+        alias = Path(buffer.value)
+        if os.path.normcase(str(alias)) == os.path.normcase(str(self.script)):
+            self.skipTest("8.3 aliases are disabled for this fixture volume")
+        self.assertEqual(alias.resolve(), self.script.resolve())
+        settings = self.load_settings()
+        for event, (action, _) in installer.AUTO_EVENTS.items():
+            command = installer._hook_command(alias, action)
+            handler = settings["hooks"][event][0]["hooks"][0]
+            handler["command"] = command
+            self.assertTrue(installer._owned_hook(handler, self.script))
+            self.assertFalse(installer._owned_hook(handler, self.root / "unrelated" / "codemap.py"))
+            self.assertFalse(installer._owned_hook({**handler, "command": command + " && echo unrelated"}, self.script))
+        foreign = {"type": "command", "command": "echo unrelated fixture", "timeout": 7}
+        settings["hooks"]["Stop"][0]["hooks"].append(foreign)
+        self.write_settings(settings)
+        self.assertEqual(self.run_install("--auto"), 0)
+        updated = self.load_settings()
+        self.assertEqual(len(self.own_hooks(updated)), 3)
+        self.assertEqual(sum(len(entry["hooks"]) for entries in updated["hooks"].values() for entry in entries), 4)
+        self.assertEqual(updated["hooks"]["Stop"][0]["hooks"], [foreign])
+        original = self.settings.read_bytes()
+        self.assertEqual(self.run_install("--auto"), 0)
+        self.assertEqual(self.settings.read_bytes(), original)
 
     def test_failed_atomic_replace_preserves_original_and_backup(self):
         original = self.write_settings({"theme": "dark"})

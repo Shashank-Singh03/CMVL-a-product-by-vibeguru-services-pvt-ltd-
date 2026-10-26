@@ -27,7 +27,8 @@ class LocalRunnerTest(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory(prefix="codemap-runner-tests-")
         self.addCleanup(self.temp.cleanup)
-        self.base = Path(self.temp.name)
+        # Match production path identity when Windows TEMP uses an 8.3 alias.
+        self.base = Path(self.temp.name).resolve()
         self.target = self.base / "project"
         self.target.mkdir()
         self.source = self.target / "app.py"

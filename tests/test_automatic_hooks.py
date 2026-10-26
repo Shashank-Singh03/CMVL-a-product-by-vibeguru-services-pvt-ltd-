@@ -43,7 +43,7 @@ class AutomaticHookTests(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory(prefix="codemap-automatic-hook-tests-")
         self.addCleanup(self.temp.cleanup)
-        self.base = Path(self.temp.name)
+        self.base = Path(self.temp.name).resolve()
         self.root = self.base / "project"
         self.root.mkdir()
         self.source = self.root / "app.py"

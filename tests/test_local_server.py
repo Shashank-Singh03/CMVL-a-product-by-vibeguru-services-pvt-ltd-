@@ -20,7 +20,8 @@ class LocalDashboardServerTest(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory(prefix="codemap-local-server-")
         self.addCleanup(self.temp.cleanup)
-        self.root = Path(self.temp.name) / "fixture-project"
+        # Production resolves project roots; normalize Windows TEMP aliases too.
+        self.root = Path(self.temp.name).resolve() / "fixture-project"
         self.root.mkdir()
         self.source = self.root / "app.py"
         self.source.write_text("raise RuntimeError('Never execute fixture source')\n\ndef value():\n    return 1\n", encoding="utf-8")

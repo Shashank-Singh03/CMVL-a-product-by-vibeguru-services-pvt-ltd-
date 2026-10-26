@@ -19,7 +19,8 @@ class TaskHistoryTest(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory(prefix="codemap-history-")
         self.addCleanup(self.temp.cleanup)
-        self.root = Path(self.temp.name) / "fixture-project"
+        # Keep patched path identities consistent with production canonical roots.
+        self.root = Path(self.temp.name).resolve() / "fixture-project"
         self.root.mkdir()
 
     def state(self, ident=None, **fields):

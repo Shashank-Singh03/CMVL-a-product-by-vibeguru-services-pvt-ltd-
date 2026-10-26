@@ -40,7 +40,15 @@ def hook_command(script, action, *, platform=None, python=None):
 
 
 def _same_path(first, second):
-    return os.path.normcase(os.path.abspath(first)) == os.path.normcase(os.path.abspath(second))
+    # Windows may pass an existing installation through an 8.3 alias (for
+    # example RUNNER~1), while runtime scope election resolves its long name.
+    # strict=False also canonicalizes the existing prefix during an install
+    # plan, before the target script itself has been copied into place.
+    try:
+        return os.path.normcase(str(Path(first).resolve(strict=False))) == os.path.normcase(str(Path(second).resolve(strict=False)))
+    except (OSError, RuntimeError, TypeError, ValueError):
+        # An inaccessible path or symlink loop cannot establish ownership.
+        return False
 
 
 def owned_hook(item, script, action=None):

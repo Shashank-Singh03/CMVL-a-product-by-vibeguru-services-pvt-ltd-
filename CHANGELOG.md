@@ -12,6 +12,8 @@ First CMVL public beta, powered by the codemap engine.
   a controlled rotating snapshot, and maps/video retained inside the dashboard shell.
 - Versioned bundled dashboard, tagged release assets, checksum manifest, CI, portable
   browser acceptance setup, and explicit installation/regeneration instructions.
+- Recognize equivalent Windows short and long paths when checking ownership of
+  automatic hooks; keep fixture path comparisons consistent on hosted Windows runners.
 - Source-backed review and parser/privacy improvements listed below.
 
 - Add source-backed structural model review: source/graph fingerprints, exact line evidence, validated symbol/link

@@ -5,6 +5,19 @@ fixtures. Public CI reruns the portable checks on its declared matrix; a platfor
 listed as a target is not a claim that every native speech/browser combination has
 already been certified.
 
+For the release candidate, the complete local suite ran with video checks enabled:
+**388 tests, 385 passed and 3 environment skips**, plus the beta browser acceptance
+in file, static HTTP and local API modes. The versioned ZIP was extracted into a
+disposable directory, every packaged file was checked against its manifest, and a
+fresh project-scoped install generated a working offline dashboard with the beta
+version. The first hosted CI run exposed Windows short-path aliases in hook
+ownership and fixture comparisons; the release includes the canonical-path fix
+and regression coverage. See the tagged release's Actions run for its final matrix.
+The affected hook, history, server and background-runner suites then passed locally
+(101 tests, 99 passed and 2 platform skips). The 71-test history/server/runner subset
+also passed with Windows TEMP deliberately set to a real 8.3 directory alias; the
+new hook regression passed with the fix and failed against the original comparison.
+
 The 26 October dashboard refinement passed 73 targeted Python checks (72 passed,
 one environment skip), followed by a 37-test viewer/navigation/server subset with
 all checks passing. Six browser suites checked dashboard basics, navigation,
