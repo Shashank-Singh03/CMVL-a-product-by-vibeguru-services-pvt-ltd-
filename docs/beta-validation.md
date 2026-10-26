@@ -17,6 +17,12 @@ The affected hook, history, server and background-runner suites then passed loca
 (101 tests, 99 passed and 2 platform skips). The 71-test history/server/runner subset
 also passed with Windows TEMP deliberately set to a real 8.3 directory alias; the
 new hook regression passed with the fix and failed against the original comparison.
+Subsequent hosted validation exposed a first-start concurrency race in private
+storage initialization and one remaining short-path fixture comparison. Storage
+initialization now runs under the project lock before captures begin. All 25 task
+tests passed apart from one environment skip, both with normal TEMP and a real
+short-path TEMP; 40 repeated concurrent-start checks also passed. The deterministic
+race regression fails against the original initialization order.
 
 The 26 October dashboard refinement passed 73 targeted Python checks (72 passed,
 one environment skip), followed by a 37-test viewer/navigation/server subset with

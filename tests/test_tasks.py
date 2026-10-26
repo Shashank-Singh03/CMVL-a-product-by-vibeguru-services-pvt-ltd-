@@ -1,13 +1,16 @@
 """Private task captures are repeatable and never execute project programs."""
 from __future__ import annotations
 
+import contextlib
 import json
 import os
 import shutil
 import subprocess
 import sys
 import tempfile
+import threading
 import unittest
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from unittest.mock import patch
 
@@ -21,7 +24,8 @@ class TaskSnapshotTest(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory(prefix="codemap-tasks-tests-")
         self.addCleanup(self.temp.cleanup)
-        self.base = Path(self.temp.name)
+        # Windows TEMP may use an 8.3 alias; runtime roots are canonicalized.
+        self.base = Path(self.temp.name).resolve()
         self.root = self.base / "project"
         self.root.mkdir()
         self.source = self.root / "app.py"
@@ -304,6 +308,67 @@ class TaskSnapshotTest(unittest.TestCase):
         self.assertEqual([child.returncode for child in children], [0, 0], outputs)
         self.assertEqual(outputs[0][0].strip(), outputs[1][0].strip())
         self.assertEqual(len(list((self.root / ".codemap" / "tasks").glob("*/state.json"))), 1)
+
+    def test_concurrent_first_start_waits_for_private_ignore_writer(self):
+        opened, release, second_progress = threading.Event(), threading.Event(), threading.Event()
+        original_open, original_sleep = Path.open, tasks.time.sleep
+
+        @contextlib.contextmanager
+        def paused_writer(stream):
+            with stream:
+                opened.set()
+                if not release.wait(5):
+                    raise AssertionError("ignore writer was not released")
+                yield stream
+
+        def open_with_paused_ignore(path, *args, **kwargs):
+            stream = original_open(path, *args, **kwargs)
+            if path.name == ".gitignore" and args[:1] == ("xb",) and not opened.is_set():
+                return paused_writer(stream)
+            return stream
+
+        def sleep_while_waiting(seconds):
+            if seconds == .025:
+                second_progress.set()
+            original_sleep(seconds)
+
+        def second_start():
+            try:
+                return self.start()
+            finally:
+                # An early failure must wake the test instead of hiding behind
+                # a timeout; only a pending future demonstrates lock waiting.
+                second_progress.set()
+
+        with patch.object(Path, "open", open_with_paused_ignore), patch.object(tasks.time, "sleep", sleep_while_waiting):
+            with ThreadPoolExecutor(max_workers=2) as pool:
+                first = pool.submit(self.start)
+                try:
+                    self.assertTrue(opened.wait(3), "first writer did not create the ignore file")
+                    ignore = self.root / ".codemap" / "tasks" / ".gitignore"
+                    self.assertEqual(ignore.read_bytes(), b"")
+                    second = pool.submit(second_start)
+                    self.assertTrue(second_progress.wait(3), "second caller did not reach storage initialization")
+                    self.assertFalse(second.done(), "second caller read the unfinished ignore instead of waiting")
+                    self.assertEqual(list(ignore.parent.glob("*/state.json")), [])
+                finally:
+                    release.set()
+                first_state, second_state = first.result(timeout=10), second.result(timeout=10)
+        self.assertEqual(first_state["task_id"], second_state["task_id"])
+        self.assertEqual(ignore.read_bytes(), b"*\n")
+        self.assertEqual(len(list(ignore.parent.glob("*/state.json"))), 1)
+
+    def test_invalid_existing_private_ignore_is_not_replaced(self):
+        store = self.root / ".codemap" / "tasks"
+        store.mkdir(parents=True)
+        ignore = store / ".gitignore"
+        for raw in (b"", b"!state.json\n", b"*\n" + b" " * 17):
+            with self.subTest(raw=raw):
+                ignore.write_bytes(raw)
+                with self.assertRaisesRegex(tasks.TaskError, "private task ignore file is invalid"):
+                    self.start()
+                self.assertEqual(ignore.read_bytes(), raw)
+                self.assertEqual(list(store.glob("*/state.json")), [])
 
     @unittest.skipUnless(shutil.which("git"), "git needed for tracked/untracked snapshot fixture")
     def test_git_baseline_copies_dirty_tracked_and_untracked_without_stash(self):

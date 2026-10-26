@@ -14,6 +14,8 @@ First CMVL public beta, powered by the codemap engine.
   browser acceptance setup, and explicit installation/regeneration instructions.
 - Recognize equivalent Windows short and long paths when checking ownership of
   automatic hooks; keep fixture path comparisons consistent on hosted Windows runners.
+- Serialize first-time private task storage initialization under the project lock,
+  so simultaneous task starts share one complete capture instead of failing early.
 - Source-backed review and parser/privacy improvements listed below.
 
 - Add source-backed structural model review: source/graph fingerprints, exact line evidence, validated symbol/link

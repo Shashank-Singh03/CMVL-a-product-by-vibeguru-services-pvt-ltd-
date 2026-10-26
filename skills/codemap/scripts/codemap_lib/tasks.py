@@ -108,15 +108,20 @@ def _store(root, create=False):
     _inside_path(root, target, allow_missing=True)
     if create:
         target.mkdir(parents=True, exist_ok=True, mode=0o700)
-        ignore = _inside_path(root, target / ".gitignore", allow_missing=True)
-        try:
-            with ignore.open("xb") as stream:
-                stream.write(b"*\n")
-        except FileExistsError:
-            if (not stat.S_ISREG(ignore.lstat().st_mode) or ignore.stat().st_size > 16
-                    or ignore.read_bytes().replace(b"\r\n", b"\n") != b"*\n"):
-                raise TaskError("private task ignore file is invalid")
     return target
+
+
+def _private_ignore(root, store):
+    # Call only while holding the project lock. Otherwise another first-time
+    # caller can read the exclusively created file before its writer flushes.
+    ignore = _inside_path(root, store / ".gitignore", allow_missing=True)
+    try:
+        with ignore.open("xb") as stream:
+            stream.write(b"*\n")
+    except FileExistsError:
+        if (not stat.S_ISREG(ignore.lstat().st_mode) or ignore.stat().st_size > 16
+                or ignore.read_bytes().replace(b"\r\n", b"\n") != b"*\n"):
+            raise TaskError("private task ignore file is invalid")
 
 
 def _layout(root, identifier):
@@ -202,6 +207,7 @@ def locked(root):
                 if time.monotonic() >= deadline:
                     raise TaskError("another task operation holds the project lock; retry shortly")
                 time.sleep(.025)
+        _private_ignore(root, store)
         yield root
     except OSError as exc:
         raise TaskError("private task storage is unavailable") from exc
