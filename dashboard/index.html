@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <meta name="color-scheme" content="dark light" />
+    <title>Codemap · Dashboard development</title>
+  </head>
+  <body>
+    <div id="codemap-dashboard"></div>
+    <script type="application/json" id="codemap-history-data">
+      {
+        "version": 1,
+        "project": "codemap-workspace",
+        "generatedAt": "2026-10-25T08:00:00Z",
+        "problem": false,
+        "tasks": [
+          {
+            "id": "a32418b189554132935a7a892bd9c285",
+            "status": "complete",
+            "statusLabel": "Complete",
+            "category": "complete",
+            "createdAt": "2026-10-25T07:27:38Z",
+            "updatedAt": "2026-10-25T07:29:10Z",
+            "title": "Update the answer function",
+            "summary": "A source-backed map and walkthrough of the captured code changes.",
+            "reviewedFiles": 1,
+            "changedFiles": 1,
+            "symbols": 4,
+            "edges": 3,
+            "added": 1,
+            "removed": 1,
+            "attribution": "window",
+            "omittedCount": 0,
+            "mapUrl": "tasks/a32418b189554132935a7a892bd9c285/output/codemap.html",
+            "videoUrl": null,
+            "downloadUrl": null,
+            "webmUrl": null,
+            "warnings": [],
+            "steps": [
+              {
+                "key": "capture",
+                "label": "Sources captured",
+                "state": "done"
+              },
+              { "key": "analysis", "label": "Map built", "state": "done" },
+              { "key": "review", "label": "Source reviewed", "state": "done" },
+              { "key": "render", "label": "Map rendered", "state": "done" },
+              { "key": "video", "label": "Video disabled", "state": "done" }
+            ]
+          },
+          {
+            "id": "7978d9b355dc4fdb8b439bec7c706df7",
+            "status": "reviewing",
+            "statusLabel": "Review in progress",
+            "category": "active",
+            "createdAt": "2026-10-25T07:32:00Z",
+            "updatedAt": "2026-10-25T07:33:00Z",
+            "title": "Review the latest code changes",
+            "summary": "The agent is checking the graph against the captured source files.",
+            "reviewedFiles": null,
+            "changedFiles": 2,
+            "symbols": 8,
+            "edges": 6,
+            "added": 2,
+            "removed": 1,
+            "attribution": "window",
+            "omittedCount": 0,
+            "mapUrl": null,
+            "videoUrl": null,
+            "downloadUrl": null,
+            "webmUrl": null,
+            "warnings": [],
+            "steps": [
+              {
+                "key": "capture",
+                "label": "Sources captured",
+                "state": "done"
+              },
+              { "key": "analysis", "label": "Map built", "state": "done" },
+              { "key": "review", "label": "Source review", "state": "current" },
+              { "key": "render", "label": "Render map", "state": "pending" },
+              { "key": "video", "label": "Create video", "state": "pending" }
+            ]
+          }
+        ]
+      }
+    </script>
+    <script>
+      window.__CODEMAP_HISTORY__ = JSON.parse(
+        document.getElementById("codemap-history-data").textContent,
+      );
+    </script>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

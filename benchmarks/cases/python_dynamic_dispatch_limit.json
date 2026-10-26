@@ -1,0 +1,17 @@
+{
+  "id": "python_dynamic_dispatch_limit",
+  "description": "A closed-world getattr call has a real target, exercising a documented limit of syntax-based linking.",
+  "provenance": "authored",
+  "known_gap": true,
+  "languages": ["python"],
+  "mode": "repo",
+  "files": {
+    "dynamic.py": "class Saver:\n    def persist(self):\n        return 7\n\nsaver = Saver()\n\ndef invoke(target):\n    return getattr(target, 'persist')()\n\ndef run():\n    return invoke(saver)\n"
+  },
+  "expected": {
+    "symbols": ["c:dynamic.py#Saver", "f:dynamic.py#Saver.persist", "f:dynamic.py#invoke", "f:dynamic.py#run"],
+    "edges": [["f:dynamic.py#run", "f:dynamic.py#invoke"], ["f:dynamic.py#invoke", "f:dynamic.py#Saver.persist"]],
+    "risks": []
+  },
+  "notes": ["Known capability limit: resolving invoke to Saver.persist requires propagating the only caller's argument and interpreting getattr.", "Ground truth assumes this complete fixture, ordinary Python object behavior, and invocation through run; there is no monkey patching or additional caller.", "The module-level Saver construction has no source function as its caller and contributes no function-to-function edge."]
+}

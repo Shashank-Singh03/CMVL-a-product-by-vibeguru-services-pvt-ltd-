@@ -1,0 +1,374 @@
+{
+ "why": "Adds note deletion end to end, a read cache, per-tag statistics in the Java service, and a nightly backup of notes to cloud storage.",
+ "items": {
+  "g:@code": [
+   "Application code",
+   "The Python backend, Java stats service, web page and a new backup script; gains deletion, a cache and tag counts."
+  ],
+  "g:@api": [
+   "API contract",
+   "The OpenAPI description of every endpoint; adds delete and tag-count endpoints and renames one field."
+  ],
+  "g:@infra": [
+   "Infrastructure and deployment",
+   "Container image, local compose setup, Kubernetes deployment and new cloud backup storage."
+  ],
+  "g:app/": [
+   "Notes backend (Python)",
+   "Stores notes in a JSON file and serves them over HTTP and the command line; now cached and deletable."
+  ],
+  "g:services/": [
+   "Stats service (Java)",
+   "A separate Java service that reads notes from the API and computes statistics; now counts notes per tag."
+  ],
+  "g:web/": [
+   "Web page",
+   "The browser front end that lists notes; each note now has a delete button."
+  ],
+  "m:.github/workflows/ci.yml": [
+   "Build pipeline",
+   "Runs the tests on every push; now also runs a nightly backup job."
+  ],
+  "m:requirements.txt": [
+   "Python packages",
+   "Third-party libraries the backend needs; adds the AWS client library."
+  ],
+  "m:README.md": [
+   "Project readme",
+   "How to run the app; gains a section on deleting notes."
+  ],
+  "m:docs/runbook.txt": [
+   "Restore runbook",
+   "New step-by-step guide to restore notes from a nightly backup by pausing the API and copying the file back."
+  ],
+  "m:scripts/backup.sh": [
+   "Backup script",
+   "New shell script that copies the notes file to cloud storage under today's date."
+  ],
+  "c:api/openapi.yaml#Endpoints": [
+   "Endpoint list",
+   "Every HTTP operation the API promises; adds deleting a note and counting notes per tag."
+  ],
+  "c:api/openapi.yaml#Schemas": [
+   "Data shapes",
+   "The fields a note has in API responses; the creation-date field was renamed."
+  ],
+  "m:Dockerfile": [
+   "Container image recipe",
+   "How the backend is packaged; moves to Python 3.13 and now runs as a non-admin user."
+  ],
+  "m:deploy/k8s.yaml": [
+   "Kubernetes deployment",
+   "How the API runs in the cluster; now three copies of version 1.5.0, but privileged."
+  ],
+  "m:docker-compose.yml": [
+   "Local multi-service setup",
+   "Starts the API, web page and stats service together; the API gets a cache size setting."
+  ],
+  "m:infra/backup.tf": [
+   "Cloud backup storage",
+   "New Terraform for a backup bucket and its write permission; both are far too open."
+  ],
+  "c:app/api.py#NotesAPI": [
+   "HTTP request handlers",
+   "Turns web requests into note operations; adds a handler for deleting a note."
+  ],
+  "c:app/cache.py#LRUCache": [
+   "Recent-results cache",
+   "New fixed-size memory cache that forgets the least recently used entry first."
+  ],
+  "m:app/cli.py": [
+   "Command-line tool",
+   "Manage notes from a terminal; adds an rm command."
+  ],
+  "c:app/models.py#Note": [
+   "Note record",
+   "One note: a title, a body and tags."
+  ],
+  "c:app/service.py#NoteService": [
+   "Note operations",
+   "Core logic to add, list, search and now delete notes, with reads served from the cache."
+  ],
+  "c:app/store.py#JsonStore": [
+   "JSON file storage",
+   "Reads and writes all notes in one file; can now delete one and saves via a temporary file."
+  ],
+  "m:app/textutil.py": [
+   "Text helpers",
+   "Makes URL-safe ids and splits text into words for search."
+  ],
+  "c:services/stats/src/main/java/com/notes/stats/NoteClient.java#NoteClient": [
+   "Notes API client",
+   "How the stats service fetches every note from the main API."
+  ],
+  "c:services/stats/src/main/java/com/notes/stats/StatsController.java#StatsController": [
+   "Stats web endpoints",
+   "HTTP endpoints of the stats service; adds per-tag counts."
+  ],
+  "c:services/stats/src/main/java/com/notes/stats/StatsService.java#StatsService": [
+   "Statistics logic",
+   "Computes numbers about notes; now counts how many notes carry each tag."
+  ],
+  "m:web/api.js": [
+   "Browser API calls",
+   "Functions the page uses to talk to the backend; adds a delete call."
+  ],
+  "c:web/app.js#NotesApp": [
+   "Page controller",
+   "Loads notes and redraws the list; now reacts to delete clicks."
+  ],
+  "m:web/render.js": [
+   "HTML rendering",
+   "Turns notes into HTML; each note now carries a delete button."
+  ],
+  "f:.github/workflows/ci.yml#on": [
+   "Pipeline triggers",
+   "Runs on every push and now also every night at 2 a.m."
+  ],
+  "f:.github/workflows/ci.yml#test": [
+   "Test job",
+   "Checks out the code, sets up Python and runs the tests."
+  ],
+  "f:.github/workflows/ci.yml#backup": [
+   "Nightly backup job",
+   "New: runs the backup script after the tests pass; uses an unpinned checkout action."
+  ],
+  "f:requirements.txt#boto3": [
+   "AWS client library",
+   "New dependency for talking to AWS from Python."
+  ],
+  "f:README.md#Deleting notes": [
+   "Deleting notes guide",
+   "Explains the new delete command and that backups keep deleted notes for 30 days."
+  ],
+  "f:scripts/backup.sh#backup_notes": [
+   "Upload a backup",
+   "Copies the notes file to the backup bucket, named with today's date."
+  ],
+  "f:api/openapi.yaml#Endpoints.GET /notes": [
+   "List notes endpoint",
+   "Returns all notes, optionally filtered by tag."
+  ],
+  "f:api/openapi.yaml#Endpoints.POST /notes": [
+   "Create note endpoint",
+   "Adds a new note."
+  ],
+  "f:api/openapi.yaml#Endpoints.DELETE /notes/{id}": [
+   "Delete note endpoint",
+   "New: removes a note by id; answers 204 when deleted and 404 when missing."
+  ],
+  "f:api/openapi.yaml#Endpoints.GET /stats/tags": [
+   "Tag counts endpoint",
+   "New: how many notes use each tag, served by the Java stats service."
+  ],
+  "f:api/openapi.yaml#Schemas.Note": [
+   "Note shape",
+   "Fields of a note; created was renamed createdAt, which breaks existing clients."
+  ],
+  "f:Dockerfile#container image": [
+   "Image build steps",
+   "Python 3.13 base, creates an app user and runs as it, then starts the app."
+  ],
+  "f:deploy/k8s.yaml#Deployment/notes-api": [
+   "API deployment",
+   "Runs the API image; now three replicas of version 1.5.0 in a privileged container."
+  ],
+  "f:deploy/k8s.yaml#Service/notes-api": [
+   "API network service",
+   "Exposes the API deployment on port 80 inside the cluster."
+  ],
+  "f:docker-compose.yml#api": [
+   "API container",
+   "Builds the backend and opens port 8000; now sets the cache size to 256."
+  ],
+  "f:docker-compose.yml#web": [
+   "Web container",
+   "Serves the front end with nginx."
+  ],
+  "f:docker-compose.yml#stats": [
+   "Stats container",
+   "Builds and runs the Java stats service."
+  ],
+  "f:infra/backup.tf#aws_s3_bucket.backups": [
+   "Backup bucket",
+   "New storage bucket for backups; set to public-read, so anyone can download the notes."
+  ],
+  "f:infra/backup.tf#aws_iam_policy.backup_writer": [
+   "Backup write permission",
+   "New policy for the backup job; allows every storage action on every resource."
+  ],
+  "f:infra/backup.tf#output.backup_bucket": [
+   "Bucket name output",
+   "Publishes the backup bucket's name for other tools."
+  ],
+  "f:app/api.py#NotesAPI.create": [
+   "Handle create request",
+   "Creates a note from the request body."
+  ],
+  "f:app/api.py#NotesAPI.list": [
+   "Handle list request",
+   "Returns notes, optionally for one tag."
+  ],
+  "f:app/api.py#NotesAPI.search": [
+   "Handle search request",
+   "Returns notes that match the search words."
+  ],
+  "f:app/api.py#NotesAPI.delete": [
+   "Handle delete request",
+   "New: deletes the note and answers 204, or 404 if it did not exist."
+  ],
+  "f:app/cache.py#LRUCache.__init__": [
+   "Create the cache",
+   "Sets the capacity and an empty ordered store."
+  ],
+  "f:app/cache.py#LRUCache.get": [
+   "Read from cache",
+   "Returns a cached value and marks it recently used; nothing if missing."
+  ],
+  "f:app/cache.py#LRUCache.put": [
+   "Store in cache",
+   "Saves a value and drops the oldest one when full."
+  ],
+  "f:app/cache.py#LRUCache.invalidate": [
+   "Clear the cache",
+   "Empties the cache so the next read reloads from storage."
+  ],
+  "f:app/cli.py#build_parser": [
+   "Define commands",
+   "Declares the command-line commands; adds rm with a note id."
+  ],
+  "f:app/cli.py#main": [
+   "Run a command",
+   "Dispatches the chosen command; rm now deletes a note."
+  ],
+  "f:app/service.py#NoteService.__init__": [
+   "Set up the service",
+   "Connects storage and now creates a 256-entry cache."
+  ],
+  "f:app/service.py#NoteService.add_note": [
+   "Add a note",
+   "Saves a new note and now clears the cache so lists stay fresh."
+  ],
+  "f:app/service.py#NoteService.list_notes": [
+   "List notes",
+   "Lists notes, now read through the cache."
+  ],
+  "f:app/service.py#NoteService.search": [
+   "Search notes",
+   "Finds notes that share a word with the query, now read through the cache."
+  ],
+  "f:app/service.py#NoteService.delete_note": [
+   "Delete a note",
+   "New: removes a note from storage and clears the cache; reports whether it existed."
+  ],
+  "f:app/service.py#NoteService._all_notes": [
+   "Cached note loading",
+   "New: returns all notes from the cache, reading the file only on a miss."
+  ],
+  "f:app/service.py#NoteService.legacy_export": [
+   "Old tab-separated export",
+   "Removed: wrote every note to a tab-separated file."
+  ],
+  "f:app/store.py#JsonStore.load": [
+   "Read the file",
+   "Loads every note from the JSON file."
+  ],
+  "f:app/store.py#JsonStore.save": [
+   "Write the file safely",
+   "Now writes a temporary file and swaps it in, so a crash cannot corrupt the notes."
+  ],
+  "f:app/store.py#JsonStore.delete": [
+   "Remove from the file",
+   "New: deletes one note from the file; false if it was not there."
+  ],
+  "f:app/store.py#JsonStore.all": [
+   "All notes",
+   "Returns every stored note as a list."
+  ],
+  "f:app/textutil.py#tokenize": [
+   "Split into words",
+   "Breaks text into lowercase words for search."
+  ],
+  "f:services/stats/src/main/java/com/notes/stats/NoteClient.java#NoteClient.fetchAll": [
+   "Fetch all notes",
+   "Asks the main API for every note."
+  ],
+  "f:services/stats/src/main/java/com/notes/stats/StatsController.java#StatsController.byTag": [
+   "Serve tag counts",
+   "New: answers the tag-counts endpoint with counts per tag."
+  ],
+  "f:services/stats/src/main/java/com/notes/stats/StatsService.java#StatsService.countByTag": [
+   "Count notes per tag",
+   "New: fetches all notes and tallies how many carry each tag."
+  ],
+  "f:web/api.js#deleteNote": [
+   "Call delete endpoint",
+   "New: asks the backend to delete a note; true when it answers 204."
+  ],
+  "f:web/app.js#NotesApp.constructor": [
+   "Start the page",
+   "Sets up the page and now listens for clicks on the list."
+  ],
+  "f:web/app.js#NotesApp.onClick": [
+   "Handle delete click",
+   "New: when a delete button is clicked, deletes the note and redraws."
+  ],
+  "f:web/app.js#NotesApp.draw": [
+   "Redraw the list",
+   "Renders the current notes into the page."
+  ],
+  "f:web/render.js#renderNote": [
+   "Draw one note",
+   "Builds a note's HTML; now with its id and a delete button."
+  ],
+  "f:web/render.js#renderList": [
+   "Draw the list",
+   "Builds the HTML for all notes."
+  ],
+  "m:app/models.py": [
+   "Title checks",
+   "Module-level helper that validates note titles before they are saved."
+  ],
+  "f:app/models.py#validate_title": [
+   "Check a title",
+   "Rejects empty titles and titles longer than 120 characters."
+  ]
+ },
+ "views": {
+  "root": "One change touched code, the API contract, infrastructure, the pipeline, dependencies and docs.",
+  "g:@code": "Three code areas changed, plus a new backup script.",
+  "g:@api": "The contract gains two endpoints and renames one field.",
+  "g:@infra": "Packaging, local setup, the cluster and new cloud storage all changed.",
+  "m:.github/workflows/ci.yml": "Tests still run on every push; a nightly backup job was added.",
+  "g:app/": "Delete flows from the HTTP handler through the service to the file; reads now go through a cache.",
+  "g:services/": "The Java service gains a per-tag count behind a new endpoint.",
+  "g:web/": "Each note gets a delete button wired to a new API call.",
+  "m:infra/backup.tf": "A public bucket and a wide-open write policy were added.",
+  "c:app/service.py#NoteService": "Every read now goes through the cache; every write clears it."
+ },
+ "risks": {
+  "r1": "Real issue: a branch can change under you; pin the checkout action to a release tag or commit.",
+  "r2": "Real issue: nothing in the API needs host access; remove privileged mode.",
+  "r3": "Real issue: backups contain every note, so a public-read bucket leaks them; make it private.",
+  "r4": "Real issue: the backup only uploads files; allow just the upload action.",
+  "r5": "Real issue: limit the policy to the backup bucket instead of every resource.",
+  "r6": "Real issue: any client reading created breaks; send both fields for one release or version the API.",
+  "r7": "Probably unneeded: the backup script uses the AWS command-line tool, not this library."
+ },
+ "beats": {
+  "b1": "What the AI changed in the notes app: note deletion, a read cache, tag statistics, and a nightly cloud backup.",
+  "b2": "Users can now delete notes and see tag counts; a cache speeds up reads, and nightly backups protect the data.",
+  "b3": "Twenty files changed across six areas: code, the API contract, infrastructure, the build pipeline, dependencies and documentation.",
+  "b4": "In the code, the Python backend, the Java stats service and the web page changed, and a new backup script appeared.",
+  "b5": "On the web page, each note gets a delete button that calls a new delete function in the browser's API layer.",
+  "b6": "The Python backend gains a delete path from the HTTP handler down to file storage, and a cache in front of every read.",
+  "b7": "The Java stats service gains a new endpoint that counts how many notes carry each tag.",
+  "b8": "The API contract documents both new endpoints, and renames the note's creation date field, which breaks existing clients.",
+  "b9": "Infrastructure: the image moves to Python 3.13 as a non-admin user, Kubernetes runs three replicas, and Terraform adds a backup bucket.",
+  "b10": "Review these first: a privileged container, a public backup bucket, an over-broad storage policy, an unpinned CI action, and the renamed field.",
+  "b11": "Inside the note service, listing and searching now read through the cache, while adding and deleting clear it.",
+  "b12": "The new delete operation removes the note from storage, then clears the cache so nobody sees the deleted note.",
+  "b13": "It asks storage to delete by id; only when something was removed does it empty the cache, then it reports success.",
+  "b14": "In short: deletion works end to end and reads are cached, but fix the privileged pod and the public bucket before shipping."
+ }
+}

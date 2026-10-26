@@ -1,0 +1,17 @@
+{
+  "id": "ci_risk_controls",
+  "description": "Workflow dependencies resolve while write-all permissions and a moving action branch are distinguished from read-only, commit-pinned settings.",
+  "provenance": "authored",
+  "languages": ["github-actions"],
+  "mode": "repo",
+  "audit": true,
+  "files": {
+    ".github/workflows/checks.yml": "name: Authored checks fixture\non: push\npermissions: write-all\njobs:\n  unsafe:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: example/check@main\n  safe:\n    needs: unsafe\n    runs-on: ubuntu-latest\n    permissions: read-all\n    steps:\n      - uses: example/check@1111111111111111111111111111111111111111\n"
+  },
+  "expected": {
+    "symbols": ["f:.github/workflows/checks.yml#on", "f:.github/workflows/checks.yml#permissions", "f:.github/workflows/checks.yml#unsafe", "f:.github/workflows/checks.yml#safe"],
+    "edges": [["f:.github/workflows/checks.yml#safe", "f:.github/workflows/checks.yml#unsafe"]],
+    "risks": [{"rule": "ci.write_all", "file": ".github/workflows/checks.yml", "line": 3}, {"rule": "ci.unpinned_action", "file": ".github/workflows/checks.yml", "line": 8}]
+  },
+  "notes": ["The example action and all-ones commit are nonexecuted fixture identifiers. A syntactically pinned hash is a negative control for branch mutability, not an endorsement of an action's trustworthiness.", "The dependency edge points from the job declaring needs to its prerequisite."]
+}

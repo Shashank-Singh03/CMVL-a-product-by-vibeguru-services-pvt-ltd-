@@ -1,0 +1,20 @@
+{
+  "id": "python_deleted_target",
+  "description": "A removed helper remains visible as the target of a retained broken caller in a change map.",
+  "provenance": "authored",
+  "languages": ["python"],
+  "mode": "diff",
+  "before": {
+    "app.py": "def obsolete():\n    return 5\n\ndef caller():\n    return obsolete()\n"
+  },
+  "files": {
+    "app.py": "def caller():\n    return obsolete()\n"
+  },
+  "expected": {
+    "symbols": ["f:app.py#obsolete", "f:app.py#caller"],
+    "mapped_symbols": ["f:app.py#obsolete", "f:app.py#caller"],
+    "edges": [["f:app.py#caller", "f:app.py#obsolete"]],
+    "risks": []
+  },
+  "notes": ["The edge identifies a retained reference to a deleted declaration. It does not claim that the new program can execute this call successfully.", "The deleted declaration belongs in diff ground truth even though it is absent from current source."]
+}

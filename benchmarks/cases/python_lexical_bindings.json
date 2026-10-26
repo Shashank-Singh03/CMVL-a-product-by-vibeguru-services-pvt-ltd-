@@ -1,0 +1,17 @@
+{
+  "id": "python_lexical_bindings",
+  "description": "Imported helpers and self calls resolve; parameters and comprehension targets do not become calls to a same-named global.",
+  "provenance": "authored",
+  "languages": ["python"],
+  "mode": "repo",
+  "files": {
+    "helpers.py": "def normalize(value):\n    return value.strip()\n",
+    "app.py": "from helpers import normalize\n\ndef dispatch():\n    return 'global'\n\ndef shadowed(dispatch):\n    return dispatch()\n\ndef visit(items):\n    return [dispatch() for dispatch in items]\n\ndef run(value):\n    return normalize(value)\n\nclass Service:\n    def execute(self):\n        return self.finish()\n\n    def finish(self):\n        return 1\n"
+  },
+  "expected": {
+    "symbols": ["f:helpers.py#normalize", "f:app.py#dispatch", "f:app.py#shadowed", "f:app.py#visit", "f:app.py#run", "c:app.py#Service", "f:app.py#Service.execute", "f:app.py#Service.finish"],
+    "edges": [["f:app.py#run", "f:helpers.py#normalize"], ["f:app.py#Service.execute", "f:app.py#Service.finish"]],
+    "risks": []
+  },
+  "notes": ["The callable passed to shadowed and each item visited by visit are unknown. Neither call is evidence of a dependency on the global dispatch function.", "Built-in and external-library calls are outside the repository-edge ground truth."]
+}

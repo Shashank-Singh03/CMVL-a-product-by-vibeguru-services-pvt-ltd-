@@ -1,0 +1,18 @@
+{
+  "id": "javascript_imports",
+  "description": "Named import aliases and namespace-qualified calls connect a three-file JavaScript workflow.",
+  "provenance": "authored",
+  "languages": ["javascript"],
+  "mode": "repo",
+  "files": {
+    "web/util.js": "export function normalize(value) {\n  return value.trim();\n}\n",
+    "web/api.js": "import { normalize as clean } from './util.js';\nexport function submit(value) {\n  return clean(value);\n}\n",
+    "web/app.js": "import * as api from './api.js';\nexport function start(value) {\n  return api.submit(value);\n}\n"
+  },
+  "expected": {
+    "symbols": ["f:web/util.js#normalize", "f:web/api.js#submit", "f:web/app.js#start"],
+    "edges": [["f:web/api.js#submit", "f:web/util.js#normalize"], ["f:web/app.js#start", "f:web/api.js#submit"]],
+    "risks": []
+  },
+  "notes": ["String.trim is an external platform method and is not a repository edge."]
+}

@@ -1,0 +1,17 @@
+{
+  "id": "csharp_typed_member",
+  "description": "C# namespace declarations, a constructor and a concrete repository-field call.",
+  "provenance": "authored",
+  "languages": ["csharp"],
+  "mode": "repo",
+  "files": {
+    "Accuracy/Repository.cs": "namespace Accuracy {\n    public class Repository {\n        public string Retrieve(string id) {\n            return id;\n        }\n    }\n}\n",
+    "Accuracy/Service.cs": "namespace Accuracy {\n    public class Service {\n        private Repository repository;\n\n        public Service(Repository repository) {\n            this.repository = repository;\n        }\n\n        public string Fetch(string id) {\n            return repository.Retrieve(id);\n        }\n    }\n}\n"
+  },
+  "expected": {
+    "symbols": ["c:Accuracy/Repository.cs#Repository", "f:Accuracy/Repository.cs#Repository.Retrieve", "c:Accuracy/Service.cs#Service", "f:Accuracy/Service.cs#Service.Service", "f:Accuracy/Service.cs#Service.Fetch"],
+    "edges": [["f:Accuracy/Service.cs#Service.Fetch", "f:Accuracy/Repository.cs#Repository.Retrieve"]],
+    "risks": []
+  },
+  "notes": ["Namespace blocks and fields support resolution but are not class/function symbols in this corpus's ID contract.", "No reflection, interface dispatch or generated partial class is required."]
+}

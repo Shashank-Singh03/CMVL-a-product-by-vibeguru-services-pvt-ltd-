@@ -1,0 +1,18 @@
+{
+  "id": "javascript_openapi_routes",
+  "description": "A fetch client, OpenAPI operation and explicitly registered Express-style handler describe one HTTP route.",
+  "provenance": "authored",
+  "languages": ["javascript", "openapi"],
+  "mode": "repo",
+  "files": {
+    "server.js": "export function readItem(req, res) {\n  return res.json({ id: req.params.id });\n}\napp.get('/items/:id', readItem);\n",
+    "client.js": "export async function loadItem(id) {\n  return fetch(`/items/${id}`);\n}\n",
+    "api/openapi.yaml": "openapi: 3.0.3\ninfo:\n  title: Authored route fixture\n  version: 1.0.0\npaths:\n  /items/{id}:\n    get:\n      operationId: readItem\n      responses:\n        '200':\n          description: Found\n"
+  },
+  "expected": {
+    "symbols": ["f:server.js#readItem", "f:client.js#loadItem", "c:api/openapi.yaml#Endpoints", "f:api/openapi.yaml#Endpoints.GET /items/{id}"],
+    "edges": [["f:client.js#loadItem", "f:server.js#readItem"], ["f:client.js#loadItem", "f:api/openapi.yaml#Endpoints.GET /items/{id}"], ["f:api/openapi.yaml#Endpoints.GET /items/{id}", "f:server.js#readItem"]],
+    "risks": []
+  },
+  "notes": ["These are route/reference dependencies as well as ordinary call dependencies. Parameter spellings :id, {id}, and the client interpolation identify the same route.", "The fixture supplies route declarations without installing or running Express."]
+}

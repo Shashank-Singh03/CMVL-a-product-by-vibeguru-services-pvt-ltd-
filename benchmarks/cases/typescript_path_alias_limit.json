@@ -1,0 +1,35 @@
+{
+  "id": "typescript_path_alias_limit",
+  "description": "A tsconfig paths alias selects the domain implementation despite a same-named legacy declaration.",
+  "provenance": "authored",
+  "known_gap": false,
+  "languages": [
+    "typescript"
+  ],
+  "mode": "repo",
+  "files": {
+    "tsconfig.json": "{\n  \"compilerOptions\": {\n    \"baseUrl\": \".\",\n    \"paths\": {\"@domain/*\": [\"src/domain/*\"]}\n  }\n}\n",
+    "src/domain/read.ts": "export function getRecord(id: string) {\n  return { id, origin: 'domain' };\n}\n",
+    "src/legacy/read.ts": "export function getRecord(id: string) {\n  return { id, origin: 'legacy' };\n}\n",
+    "src/entry.ts": "import { getRecord } from '@domain/read';\nexport function run(id: string) {\n  return getRecord(id);\n}\n"
+  },
+  "expected": {
+    "symbols": [
+      "f:src/domain/read.ts#getRecord",
+      "f:src/legacy/read.ts#getRecord",
+      "f:src/entry.ts#run"
+    ],
+    "edges": [
+      [
+        "f:src/entry.ts#run",
+        "f:src/domain/read.ts#getRecord"
+      ]
+    ],
+    "risks": []
+  },
+  "notes": [
+    "Resolved capability check: this requires reading tsconfig compilerOptions.paths; a global unique-name guess cannot pass because two declarations have the same name.",
+    "tsconfig.json supplies resolver metadata. Ordinary configuration keys are outside the source-symbol set for this repository-mode case.",
+    "The edge to the legacy getRecord is incorrect even though its spelling matches."
+  ]
+}

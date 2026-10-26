@@ -1,0 +1,17 @@
+{
+  "id": "go_receivers_and_imports",
+  "description": "Go receiver methods connect both same-type calls and a field typed by an imported local package.",
+  "provenance": "authored",
+  "languages": ["go"],
+  "mode": "repo",
+  "files": {
+    "internal/store/store.go": "package store\n\ntype Store struct {}\n\nfunc (s *Store) Read(id string) string {\n    return id\n}\n\nfunc (s *Store) Fetch(id string) string {\n    return s.Read(id)\n}\n",
+    "internal/service/service.go": "package service\n\nimport \"example.test/accuracy/internal/store\"\n\ntype Service struct {\n    storage *store.Store\n}\n\nfunc (s *Service) Fetch(id string) string {\n    return s.storage.Read(id)\n}\n"
+  },
+  "expected": {
+    "symbols": ["c:internal/store/store.go#Store", "f:internal/store/store.go#Store.Read", "f:internal/store/store.go#Store.Fetch", "c:internal/service/service.go#Service", "f:internal/service/service.go#Service.Fetch"],
+    "edges": [["f:internal/store/store.go#Store.Fetch", "f:internal/store/store.go#Store.Read"], ["f:internal/service/service.go#Service.Fetch", "f:internal/store/store.go#Store.Read"]],
+    "risks": []
+  },
+  "notes": ["example.test is a reserved fixture host. No package is downloaded or executed.", "The import path's internal/store suffix denotes the source package supplied in this fixture."]
+}

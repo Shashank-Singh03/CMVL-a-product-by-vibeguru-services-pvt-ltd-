@@ -1,0 +1,239 @@
+{
+  "schema_version": 1,
+  "dataset_sha256": "dfc13f920bbf96e9e649af81fae080d3cba6dfb5c6318cb65ade7220e0ac1411",
+  "cases": [
+    {
+      "id": "ci_risk_controls",
+      "metrics": {
+        "symbols": {
+          "missing": [],
+          "unexpected": []
+        },
+        "edges": {
+          "missing": [],
+          "unexpected": []
+        },
+        "risks": {
+          "missing": [],
+          "unexpected": []
+        }
+      },
+      "parse_errors": [],
+      "missing_from_map": []
+    },
+    {
+      "id": "csharp_typed_member",
+      "metrics": {
+        "symbols": {
+          "missing": [],
+          "unexpected": []
+        },
+        "edges": {
+          "missing": [],
+          "unexpected": []
+        },
+        "risks": {
+          "missing": [],
+          "unexpected": []
+        }
+      },
+      "parse_errors": [],
+      "missing_from_map": []
+    },
+    {
+      "id": "go_receivers_and_imports",
+      "metrics": {
+        "symbols": {
+          "missing": [],
+          "unexpected": []
+        },
+        "edges": {
+          "missing": [],
+          "unexpected": []
+        },
+        "risks": {
+          "missing": [],
+          "unexpected": []
+        }
+      },
+      "parse_errors": [],
+      "missing_from_map": []
+    },
+    {
+      "id": "infrastructure_risk_controls",
+      "metrics": {
+        "symbols": {
+          "missing": [],
+          "unexpected": []
+        },
+        "edges": {
+          "missing": [],
+          "unexpected": []
+        },
+        "risks": {
+          "missing": [],
+          "unexpected": []
+        }
+      },
+      "parse_errors": [],
+      "missing_from_map": []
+    },
+    {
+      "id": "java_typed_member",
+      "metrics": {
+        "symbols": {
+          "missing": [],
+          "unexpected": []
+        },
+        "edges": {
+          "missing": [],
+          "unexpected": []
+        },
+        "risks": {
+          "missing": [],
+          "unexpected": []
+        }
+      },
+      "parse_errors": [],
+      "missing_from_map": []
+    },
+    {
+      "id": "javascript_imports",
+      "metrics": {
+        "symbols": {
+          "missing": [],
+          "unexpected": []
+        },
+        "edges": {
+          "missing": [],
+          "unexpected": []
+        },
+        "risks": {
+          "missing": [],
+          "unexpected": []
+        }
+      },
+      "parse_errors": [],
+      "missing_from_map": []
+    },
+    {
+      "id": "javascript_openapi_routes",
+      "metrics": {
+        "symbols": {
+          "missing": [],
+          "unexpected": []
+        },
+        "edges": {
+          "missing": [],
+          "unexpected": []
+        },
+        "risks": {
+          "missing": [],
+          "unexpected": []
+        }
+      },
+      "parse_errors": [],
+      "missing_from_map": []
+    },
+    {
+      "id": "python_deleted_target",
+      "metrics": {
+        "symbols": {
+          "missing": [],
+          "unexpected": []
+        },
+        "edges": {
+          "missing": [],
+          "unexpected": []
+        },
+        "risks": {
+          "missing": [],
+          "unexpected": []
+        }
+      },
+      "parse_errors": [],
+      "missing_from_map": []
+    },
+    {
+      "id": "python_diff_risk_controls",
+      "metrics": {
+        "symbols": {
+          "missing": [],
+          "unexpected": []
+        },
+        "edges": {
+          "missing": [],
+          "unexpected": []
+        },
+        "risks": {
+          "missing": [],
+          "unexpected": []
+        }
+      },
+      "parse_errors": [],
+      "missing_from_map": []
+    },
+    {
+      "id": "python_dynamic_dispatch_limit",
+      "metrics": {
+        "symbols": {
+          "missing": [],
+          "unexpected": []
+        },
+        "edges": {
+          "missing": [
+            [
+              "f:dynamic.py#invoke",
+              "f:dynamic.py#Saver.persist"
+            ]
+          ],
+          "unexpected": []
+        },
+        "risks": {
+          "missing": [],
+          "unexpected": []
+        }
+      },
+      "parse_errors": [],
+      "missing_from_map": []
+    },
+    {
+      "id": "python_lexical_bindings",
+      "metrics": {
+        "symbols": {
+          "missing": [],
+          "unexpected": []
+        },
+        "edges": {
+          "missing": [],
+          "unexpected": []
+        },
+        "risks": {
+          "missing": [],
+          "unexpected": []
+        }
+      },
+      "parse_errors": [],
+      "missing_from_map": []
+    },
+    {
+      "id": "typescript_path_alias_limit",
+      "metrics": {
+        "symbols": {
+          "missing": [],
+          "unexpected": []
+        },
+        "edges": {
+          "missing": [],
+          "unexpected": []
+        },
+        "risks": {
+          "missing": [],
+          "unexpected": []
+        }
+      },
+      "parse_errors": [],
+      "missing_from_map": []
+    }
+  ]
+}

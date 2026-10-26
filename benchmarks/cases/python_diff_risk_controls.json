@@ -1,0 +1,19 @@
+{
+  "id": "python_diff_risk_controls",
+  "description": "Added credential and shell-command risks are located precisely; an adjacent pure function is a negative control.",
+  "provenance": "authored",
+  "languages": ["python"],
+  "mode": "diff",
+  "before": {
+    "app.py": "def handle(value):\n    return value\n"
+  },
+  "files": {
+    "app.py": "import os\n\nAPI_KEY = \"CM_FIXTURE_CREDENTIAL_7a9b2c4d6e8f\"\n\ndef handle(command):\n    return os.system(command)\n\ndef safe_handle(command):\n    return command\n"
+  },
+  "expected": {
+    "symbols": ["f:app.py#handle", "f:app.py#safe_handle"],
+    "edges": [],
+    "risks": [{"rule": "secret.hardcoded", "file": "app.py", "line": 3}, {"rule": "code.shell_injection", "file": "app.py", "line": 6}]
+  },
+  "notes": ["CM_FIXTURE_CREDENTIAL_7a9b2c4d6e8f is an invented, nonfunctional marker. It is intentionally shaped as a literal credential assignment to test recognition without using a real key.", "The fixture is parsed, never imported or executed. os.system is an external call and therefore not a repository edge.", "Risk ground truth is a review warning about accepting a command string, not a claim of an exploitable deployed application."]
+}

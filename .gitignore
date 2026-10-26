@@ -1,0 +1,66 @@
+# Python caches, environments, and packaging output
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.tox/
+.nox/
+.venv/
+venv/
+env/
+*.egg-info/
+/build/
+/dist/
+
+# JavaScript dependencies, build caches, and test output
+node_modules/
+.vite/
+*.tsbuildinfo
+/dashboard/dist/
+coverage/
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
+playwright-report/
+test-results/
+
+# Local configuration, credentials, logs, and editor/OS scratch files
+.env
+.env.*
+!.env.example
+!.env.sample
+!.env.template
+*.local
+*.log
+*.tmp
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Private task state, captured sources, maps, and rendered videos
+.codemap/
+
+# Local evaluation runs and datasets; retain the reproducible test harness
+/benchmarks/*
+!/benchmarks/README.md
+!/benchmarks/*.py
+!/benchmarks/baseline.json
+!/benchmarks/cases/
+
+# Generated project-local skill copies and private Claude settings/backups
+/.claude/skills/codemap/
+/.agents/skills/codemap/
+/.gemini/skills/codemap/
+/.cursor/skills/codemap/
+/.github/skills/codemap/
+/.claude/settings.local.json
+/.claude/settings*.codemap-backup-*.json
+
+# Keep dashboard/package-lock.json, docs/images, curated examples, and
+# skills/codemap/scripts/codemap_lib/assets/history.bundle.js and history.css in version control.
+# The bundled dashboard assets let installed users view history without Node.

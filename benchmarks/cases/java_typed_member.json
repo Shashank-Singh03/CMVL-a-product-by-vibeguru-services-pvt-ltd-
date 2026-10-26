@@ -1,0 +1,17 @@
+{
+  "id": "java_typed_member",
+  "description": "Java classes, a constructor and a method call through a declared repository field.",
+  "provenance": "authored",
+  "languages": ["java"],
+  "mode": "repo",
+  "files": {
+    "src/accuracy/Repository.java": "package accuracy;\n\npublic class Repository {\n    public String retrieve(String id) {\n        return id;\n    }\n}\n",
+    "src/accuracy/Service.java": "package accuracy;\n\npublic class Service {\n    private final Repository repository;\n\n    public Service(Repository repository) {\n        this.repository = repository;\n    }\n\n    public String fetch(String id) {\n        return repository.retrieve(id);\n    }\n}\n"
+  },
+  "expected": {
+    "symbols": ["c:src/accuracy/Repository.java#Repository", "f:src/accuracy/Repository.java#Repository.retrieve", "c:src/accuracy/Service.java#Service", "f:src/accuracy/Service.java#Service.Service", "f:src/accuracy/Service.java#Service.fetch"],
+    "edges": [["f:src/accuracy/Service.java#Service.fetch", "f:src/accuracy/Repository.java#Repository.retrieve"]],
+    "risks": []
+  },
+  "notes": ["The declared concrete field type determines the method's target. This case does not require inference across an interface or virtual override.", "Constructors are included as source declarations; the implicit Object constructor is outside repository-edge ground truth."]
+}

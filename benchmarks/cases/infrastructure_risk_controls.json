@@ -1,0 +1,20 @@
+{
+  "id": "infrastructure_risk_controls",
+  "description": "Unsafe pod privileges, public storage and ingress are flagged while equivalent safe settings and public egress stay quiet.",
+  "provenance": "authored",
+  "languages": ["kubernetes", "terraform"],
+  "mode": "repo",
+  "audit": true,
+  "files": {
+    "deploy/unsafe.yaml": "apiVersion: v1\nkind: Pod\nmetadata:\n  name: privileged-fixture\nspec:\n  containers:\n    - name: worker\n      image: busybox:1.36\n      securityContext:\n        privileged: true\n",
+    "deploy/safe.yaml": "apiVersion: v1\nkind: Pod\nmetadata:\n  name: restricted-fixture\nspec:\n  containers:\n    - name: worker\n      image: busybox:1.36\n      securityContext:\n        privileged: false\n",
+    "infra/network.tf": "resource \"aws_security_group\" \"fixture\" {\n  egress {\n    cidr_blocks = [\"0.0.0.0/0\"]\n  }\n  ingress {\n    cidr_blocks = [\"0.0.0.0/0\"]\n  }\n}\n",
+    "infra/buckets.tf": "resource \"aws_s3_bucket\" \"public_fixture\" {\n  acl = \"public-read\"\n}\n\nresource \"aws_s3_bucket\" \"private_fixture\" {\n  acl = \"private\"\n}\n"
+  },
+  "expected": {
+    "symbols": ["f:deploy/unsafe.yaml#Pod/privileged-fixture", "f:deploy/safe.yaml#Pod/restricted-fixture", "f:infra/network.tf#aws_security_group.fixture", "f:infra/buckets.tf#aws_s3_bucket.public_fixture", "f:infra/buckets.tf#aws_s3_bucket.private_fixture"],
+    "edges": [],
+    "risks": [{"rule": "k8s.privileged", "file": "deploy/unsafe.yaml", "line": 10}, {"rule": "net.open_to_internet", "file": "infra/network.tf", "line": 6}, {"rule": "storage.public", "file": "infra/buckets.tf", "line": 2}]
+  },
+  "notes": ["These deliberately incomplete infrastructure fragments exercise static declarations and settings; they are never deployed.", "Public egress is a negative control for the inbound-network rule. Audit expectations cover medium/high rules, not the absence of every possible hardening concern."]
+}
